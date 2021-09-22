@@ -1,5 +1,6 @@
 package com.example.shoplist.presentation
 
+
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -7,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shoplist.R
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
 
@@ -20,6 +22,11 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         viewModel.shopList.observe(this) {
             shopListAdapter.submitList(it)
+        }
+        val buttonAddItem = findViewById<FloatingActionButton>(R.id.button_add_shop_item)
+        buttonAddItem.setOnClickListener {
+            val intent = ShopItemActivity.newIntentAddItem(this)
+            startActivity(intent)
         }
     }
 
@@ -50,15 +57,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupClickListener() {
         shopListAdapter.onShopItemClickListener = {
-            Log.d(
-                "MainActivityLog",
-                "Name: ${it.name}, count: ${it.count}, enabled: ${it.enabled}, id: ${it.id}"
-            )
+            Log.d("MainActivityLog", it.toString())
+            val intent = ShopItemActivity.newIntentEditItem(this, it.id)
+            startActivity(intent)
         }
     }
 
     private fun setupSwipeListener(rvShopList: RecyclerView) {
-        val calback = object : ItemTouchHelper.SimpleCallback(
+        val callback = object : ItemTouchHelper.SimpleCallback(
             0,
             ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
         ) {
@@ -75,7 +81,7 @@ class MainActivity : AppCompatActivity() {
                 viewModel.deleteShopItem(item)
             }
         }
-        val itemTouchHelper = ItemTouchHelper(calback)
+        val itemTouchHelper = ItemTouchHelper(callback)
         itemTouchHelper.attachToRecyclerView(rvShopList)
     }
 }
