@@ -47,7 +47,8 @@ class ShopItemViewModel : ViewModel() {
         if (fieldsValid) {
             val shopItem = ShopItem(name = name, count = count, enabled = true)
             addShopItemUseCase.addShopItem(shopItem)
-            finishWork()        }
+            finishWork()
+        }
     }
 
     fun editShopItem(inputName: String?, inputCount: String?) {
@@ -88,11 +89,11 @@ class ShopItemViewModel : ViewModel() {
         return result
     }
 
-    private fun resetErrorInputName() {
+    fun resetErrorInputName() {
         _errorInputName.value = false
     }
 
-    private fun resetErrorInputCount() {
+    fun resetErrorInputCount() {
         _errorInputCount.value = false
     }
 
