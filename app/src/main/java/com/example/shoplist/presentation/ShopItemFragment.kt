@@ -38,6 +38,7 @@ class ShopItemFragment() : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+        Log.d("ShopItemFragmentLog", "onAttach")
         if(context is OnEditingFinishedListener) {
             onEditingFinishedListener = context
         } else{
@@ -50,10 +51,12 @@ class ShopItemFragment() : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        Log.d("ShopItemFragmentLog", "onCreateView")
         return inflater.inflate(R.layout.fragment_shop_item, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        Log.d("ShopItemFragmentLog", "onViewCreated")
         super.onViewCreated(view, savedInstanceState)
         parseParams()
         viewModel = ViewModelProvider(this).get(ShopItemViewModel::class.java)
@@ -63,7 +66,7 @@ class ShopItemFragment() : Fragment() {
         observeViewModel()
     }
 
-        private fun observeViewModel() {
+    private fun observeViewModel() {
         viewModel.errorInputName.observe(viewLifecycleOwner) {
             val message = if (it) {
                 getString(R.string.error_input_name)
@@ -162,9 +165,9 @@ class ShopItemFragment() : Fragment() {
     }
 
     interface OnEditingFinishedListener{
-
         fun onEditingFinishedListener()
     }
+
 
 
     companion object {
