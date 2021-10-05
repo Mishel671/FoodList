@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.shoplist.R
 import com.example.shoplist.domain.ShopItem
 
-class ShopItemActivity : AppCompatActivity() {
+class ShopItemActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
 
     private var screenMode = ""
     private var shopItemId = ShopItem.UNDEFINED_ID
@@ -20,6 +20,10 @@ class ShopItemActivity : AppCompatActivity() {
         if(savedInstanceState == null) {
             launchCurrentMode()
         }
+    }
+
+    override fun onEditingFinishedListener() {
+        finish()
     }
 
     private fun launchCurrentMode() {

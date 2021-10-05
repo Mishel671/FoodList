@@ -1,7 +1,6 @@
 package com.example.shoplist.presentation
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -20,9 +19,20 @@ import com.google.android.material.textfield.TextInputLayout
 
 class ShopItemFragment() : Fragment() {
 
+
     private val viewModel by lazy {
         ViewModelProvider(this).get(ShopItemViewModel::class.java)
     }
+
+    private lateinit var viewModel: ShopItemViewModel
+    private lateinit var onEditingFinishedListener: OnEditingFinishedListener
+
+    private lateinit var tilName: TextInputLayout
+    private lateinit var tilCount: TextInputLayout
+    private lateinit var etName: EditText
+    private lateinit var etCount: EditText
+    private lateinit var buttonSave: Button
+
 
     private var screenMode: String = MODE_UNKNOWN
     private var shopItemId: Int = ShopItem.UNDEFINED_ID
@@ -37,6 +47,16 @@ class ShopItemFragment() : Fragment() {
         parseParams()
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        Log.d("ShopItemFragmentLog", "onAttach")
+        if(context is OnEditingFinishedListener) {
+            onEditingFinishedListener = context
+        } else{
+            throw RuntimeException("Activity must implement listener OnEditFinishedListener")
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -44,9 +64,12 @@ class ShopItemFragment() : Fragment() {
     ): View? {
         _binding = FragmentShopItemBinding.inflate(inflater, container, false)
         return binding.root
+        Log.d("ShopItemFragmentLog", "onCreateView")
+        return inflater.inflate(R.layout.fragment_shop_item, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        Log.d("ShopItemFragmentLog", "onViewCreated")
         super.onViewCreated(view, savedInstanceState)
         parseParams()
         binding.viewModel = viewModel
@@ -56,9 +79,25 @@ class ShopItemFragment() : Fragment() {
         observeViewModel()
     }
 
-        private fun observeViewModel() {
+
+    private fun observeViewModel() {
+        viewModel.errorInputName.observe(viewLifecycleOwner) {
+            val message = if (it) {
+                getString(R.string.error_input_name)
+            } else
+                null
+            tilName.error = message
+        }
+
+        viewModel.errorInputCount.observe(viewLifecycleOwner) {
+            val message = if (it) {
+                getString(R.string.error_input_count)
+            } else
+                null
+            tilCount.error = message
+        }
         viewModel.shouldCloseScreen.observe(viewLifecycleOwner) {
-            activity?.onBackPressed()
+            onEditingFinishedListener.onEditingFinishedListener()
         }
     }
 
@@ -130,6 +169,21 @@ class ShopItemFragment() : Fragment() {
             shopItemId = args.getInt(SHOP_ITEM_ID, ShopItem.UNDEFINED_ID)
         }
     }
+
+
+    private fun initViews(view: View) {
+        tilName = view.findViewById(R.id.til_name)
+        tilCount = view.findViewById(R.id.til_count)
+        etName = view.findViewById(R.id.et_name)
+        etCount = view.findViewById(R.id.et_count)
+        buttonSave = view.findViewById(R.id.save_button)
+
+    }
+
+    interface OnEditingFinishedListener{
+        fun onEditingFinishedListener()
+    }
+
 
     companion object {
 
